@@ -1,0 +1,78 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_MODE: production
+    container_name: weekly_dev_php
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/weekly-dev
+    depends_on:
+      - mysql
+      - httpd
+      - minio
+      - mailhog
+    networks:
+      - weekly_dev_network
+
+  httpd:
+    build:
+      context: .
+      dockerfile: ./docker/httpd/Dockerfile
+    container_name: weekly_dev_httpd
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/weekly-dev
+      - ./docker/httpd/vhosts.conf:/etc/apache2/sites-available/vhosts.conf
+    depends_on:
+      - mysql
+      - minio
+      - mailhog
+    networks:
+      - weekly_dev_network
+
+  mysql:
+    image: mysql:8.0.36
+    container_name: weekly_dev_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: weekly_dev
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - weekly_dev_database:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    networks:
+      - weekly_dev_network
+
+  minio:
+    image: minio/minio:RELEASE.2022-11-11T03-44-20Z
+    ports:
+      - "9001:9001"
+    container_name: weekly_dev_minio
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=user
+      - MINIO_ROOT_PASSWORD=password
+    volumes:
+      - "./storage/app/s3_data:/tmp/s3_data"
+    command: server /tmp/s3_data --console-address ":9001"
+    networks:
+      - weekly_dev_network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: weekly_dev_mailhog
+    restart: unless-stopped
+    networks:
+      - weekly_dev_network
+
+networks:
+  weekly_dev_network:
+    driver: bridge
+
+volumes:
+  weekly_dev_database:

@@ -1,0 +1,17 @@
+services:
+  php:
+    build:
+      args:
+        PHP_MODE: development
+  httpd:
+    ports:
+      - 8095:80 # Change if needed {8086:80 or so on if already in used}
+  mysql:
+    ports:
+      - 3306:3306
+  minio:
+    ports:
+      - 9000:9000
+  mailhog:
+    ports:
+      - 8025:8025

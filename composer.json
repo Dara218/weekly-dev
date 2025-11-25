@@ -20,7 +20,10 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpmd/phpmd": "^2.15",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5.3",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -68,7 +71,18 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
+        ],
+        "check": [
+            "@cs-check-code",
+            "@cs-check-test-code",
+            "@phpstan",
+            "@md"
+        ],
+        "cs-fix": "./vendor/bin/phpcbf --standard=PSR12 app/",
+        "cs-check-code": "./vendor/bin/phpcs --standard=PSR12 app/",
+        "cs-check-test-code": "vendor/bin/phpcs --standard=PSR12 tests/",
+        "phpstan": "./vendor/bin/phpstan analyse app/ --memory-limit=-1",
+        "md": "./vendor/bin/phpmd app,config,resources,routes,database,tests text ./phpmd.xml"
     },
     "extra": {
         "laravel": {
