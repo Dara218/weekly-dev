@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('role', UserRole::list())->comment('System Role: Admin, Teacher, Student, Parent');
             $table->string('profile_image', 255)->nullable()->comment('Avatar');
             $table->boolean('is_active')->default(UserActiveStatus::ACTIVE)->comment('Soft Disable');
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
