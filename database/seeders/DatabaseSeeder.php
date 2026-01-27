@@ -2,7 +2,16 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Local\UserSeeder;
+use Database\Seeders\Local\{
+    AcademicYearSeeder,
+    ClassesSeeder,
+    ParentSeeder,
+    SectionSeeder,
+    StudentSeeder,
+    TeacherClassAssignmentSeeder,
+    TeacherSeeder,
+    UserSeeder,
+};
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +26,13 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            TeacherSeeder::class,
+            AcademicYearSeeder::class,
+            ClassesSeeder::class,
+            SectionSeeder::class,
+            TeacherClassAssignmentSeeder::class,
+            ParentSeeder::class,
+            StudentSeeder::class,
         ]);
     }
 }

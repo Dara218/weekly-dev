@@ -15,7 +15,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('section_name', 20);
             $table->string('room_number', 20);
-            $table->foreignId('class_teacher_id')->constrained('teachers', 'id');
+            $table->foreignId('class_id')->constrained('classes', 'id');
+            $table->foreignId('teacher_id')->constrained('teachers', 'id');
             $table->integer('capacity');
             $table->timestamps();
         });

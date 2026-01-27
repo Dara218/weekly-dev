@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Authentication\LoginRequest;
 use App\Services\Authentication\LoginService;
 use App\Services\Common\LogService;
+use App\Services\User\UserService;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -20,13 +21,22 @@ class LoginController extends Controller
     protected LoginService $loginService;
 
     /**
+     * Initialize UserService instance.
+     *
+     * @var \App\Services\User\UserService $userService
+     */
+    protected UserService $userService;
+
+    /**
      * Initialize classes.
      *
      * @param \App\Services\Authentication\LoginService $loginService
+     * @param \App\Services\User\UserService $userService
      */
-    public function __construct(LoginService $loginService)
+    public function __construct(LoginService $loginService, UserService $userService)
     {
         $this->loginService = $loginService;
+        $this->userService = $userService;
     }
 
     /**
@@ -36,16 +46,27 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function authenticate(LoginRequest $request)
+    public function authenticate(LoginRequest $request): Response
     {
         try {
             $loginDetails = $request->validated();
 
             $this->loginService->handleLogin($loginDetails);
 
+            $userId = Auth::id();
+
+            if ($userId === null) {
+                return response([
+                    'success' => false,
+                    'message' => 'Unable to determine authenticated user.',
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $data = $this->userService->loadUserProfile((int) $userId);
+
             return response([
                 'success' => true,
-                'data' => Auth::user(),
+                'data' => $data,
             ]);
         } catch (UnprocessableEntityHttpException $error) {
             LogService::error('Error logging-in user.', [
@@ -55,7 +76,7 @@ class LoginController extends Controller
 
             return response([
                 'success' => false,
-                'message' => $error->getMessage(),
+                'message' => 'Internal server error. Try again later.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $error) {
             LogService::error('Error logging-in user.', [
@@ -65,7 +86,7 @@ class LoginController extends Controller
 
             return response([
                 'success' => false,
-                'message' => $error->getMessage(),
+                'message' => 'Internal server error. Try again later.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -7,8 +7,8 @@ namespace App\Enum;
  */
 enum Gender: string
 {
-    case MALE = 'Male';
-    case FEMALE = 'Female';
+    case MALE = 'MALE';
+    case FEMALE = 'FEMALE';
 
     /**
      * Get the list of all enum values.

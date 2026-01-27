@@ -2,6 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Enum\{
+    Gender,
+    StudentStatus,
+};
+use App\Helpers\AdmissionNumberHelper;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +22,15 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
-            ''
+            'user_id' => 2,
+            'parent_id' => 1,
+            'admission_no' => AdmissionNumberHelper::formatAdmissionNumber(1),
+            'class_id' => 1,
+            'section_id' => 1,
+            'gender' => Gender::MALE->value,
+            'dob' => '2010-05-15',
+            'address' => fake()->address(),
+            'student_status' => StudentStatus::ACTIVE->value,
         ];
     }
 }

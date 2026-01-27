@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('user_id')->constrained();
-            $table->string('employee_code', 50);
+            $table->string('employee_code', 50)->comment('TCH-2025-00045 (Teacher - Year Hired - Sequence)');
             $table->string('phone', 20);
             $table->string('specialization', 255);
             $table->integer('experience_years');

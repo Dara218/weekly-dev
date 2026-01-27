@@ -17,12 +17,11 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('parent_id')->constrained();
-            $table->string('admission_no', 50);
+            $table->string('admission_no', 50)->comment('201911143');
             $table->foreignId('class_id')->constrained();
             $table->foreignId('section_id')->constrained();
-            $table->integer('roll_no');
             $table->enum('gender', Gender::list());
-            $table->date('dob')->comment('Date of birth');
+            $table->date('dob')->comment('Date of birth: 2010-05-15');
             $table->text('address');
             $table->enum('student_status', StudentStatus::list());
             $table->timestamps();

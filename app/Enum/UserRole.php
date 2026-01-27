@@ -7,10 +7,10 @@ namespace App\Enum;
  */
 enum UserRole: string
 {
-    case ADMIN = 'Admin';
-    case TEACHER = 'Teacher';
-    case STUDENT = 'Student';
-    case PARENT = 'Parent';
+    case ADMIN = 'ADMIN';
+    case TEACHER = 'TEACHER';
+    case STUDENT = 'STUDENT';
+    case PARENT = 'PARENT';
 
     /**
      * Get the list of all enum values.
