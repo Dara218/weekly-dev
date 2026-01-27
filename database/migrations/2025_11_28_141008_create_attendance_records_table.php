@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    // Todo: Continue migration; Table: attendance_details.
-
     /**
      * Run the migrations.
      */

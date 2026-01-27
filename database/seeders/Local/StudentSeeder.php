@@ -2,8 +2,14 @@
 
 namespace Database\Seeders\Local;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enum\{
+    Gender,
+    StudentStatus,
+};
+use App\Helpers\AdmissionNumberHelper;
+use App\Models\Student;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class StudentSeeder extends Seeder
 {
@@ -12,10 +18,23 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        // Truncate data
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        //  Set student
+        // Truncate the table to prevent duplicate data
+        Student::truncate();
 
-        // Sequence
+        $student = [
+            'user_id' => 2,
+            'parent_id' => 1,
+            'admission_no' => AdmissionNumberHelper::formatAdmissionNumber(1),
+            'class_id' => 1,
+            'section_id' => 1,
+            'gender' => Gender::MALE->value,
+            'dob' => '2010-05-15',
+            'address' => fake()->address(),
+            'student_status' => StudentStatus::ACTIVE->value,
+        ];
+
+        Student::factory()->create($student);
     }
 }

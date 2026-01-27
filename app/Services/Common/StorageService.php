@@ -40,9 +40,8 @@ class StorageService
      * @param \Psr\Http\Message\StreamInterface
      *  |\Illuminate\Http\File
      *  |\Illuminate\Http\UploadedFile
-     *  |string
-     *  |resource $contents
-     * @param array $options
+     *  |string $contents
+     * @param array<string, mixed> $options
      *
      * @return bool
      */
@@ -98,7 +97,13 @@ class StorageService
     public function get(string $path): string
     {
         try {
-            return $this->storage->get($path);
+            $contents = $this->storage->get($path);
+
+            if ($contents === null) {
+                throw new \RuntimeException("File contents for path [{$path}] is null.");
+            }
+
+            return $contents;
         } catch (\Throwable $error) {
             LogService::error('Error fetching the file.', [
                 'error' => $error->getMessage(),

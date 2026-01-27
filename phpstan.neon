@@ -1,0 +1,9 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+parameters:
+    level: 8
+    paths:
+        - app
+    ignoreErrors:
+        - identifier: missingType.generics
+    treatPhpDocTypesAsCertain: false

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title', 255);
             $table->text('message');
             $table->enum('target_group', AnnouncementTargetGroup::list());
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
     }

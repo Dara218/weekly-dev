@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('Qwerty123@'),
-            'role' => collect(UserRole::cases())->random()->value,
+            'role' => collect(UserRole::list())->random(),
             'profile_image' => fake()->image(),
             'is_active' => collect(UserActiveStatus::cases())->random()->value,
             'remember_token' => Str::random(10),
