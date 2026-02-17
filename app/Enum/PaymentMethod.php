@@ -7,9 +7,9 @@ namespace App\Enum;
  */
 enum PaymentMethod: string
 {
-    case CASH = 'Cash';
-    case BANK = 'Bank';
-    case ONLINE = 'Online';
+    case CASH = 'CASH';
+    case BANK = 'BANK';
+    case ONLINE = 'ONLINE';
 
     /**
      * Get the list of all enum values.

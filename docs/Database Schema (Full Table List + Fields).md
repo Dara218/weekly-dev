@@ -69,7 +69,7 @@ Below is the **complete database schema**, grouped by module.
 | gender       | ENUM(male, female)     |
 | dob          | DATE                   |
 | address      | TEXT                   |
-| status       | ENUM(active, alumni)   |
+| status       | ENUM(active, inactive)   |
 | created_at   | TIMESTAMP              |
 | updated_at   | TIMESTAMP              |
 

@@ -27,5 +27,17 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Interfaces\StudentInterface::class,
             \App\Repositories\StudentRepository::class,
         );
+        $this->app->bind(
+            \App\Interfaces\ParentInterface::class,
+            \App\Repositories\ParentRepository::class,
+        );
+        $this->app->bind(
+            \App\Interfaces\AcademicYearInterface::class,
+            \App\Repositories\AcademicYearRepository::class,
+        );
+        $this->app->bind(
+            \App\Interfaces\ClassesInterface::class,
+            \App\Repositories\ClassesRepository::class,
+        );
     }
 }

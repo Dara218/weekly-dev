@@ -12,4 +12,13 @@ interface StudentInterface extends BaseInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getStudentsBySearch(array $keywords);
+
+    /**
+     * Get the total student count for the given academic year.
+     *
+     * @param int $academicYearId
+     *
+     * @return int
+     */
+    public function getStudentCountByCurrentYear(int $academicYearId);
 }

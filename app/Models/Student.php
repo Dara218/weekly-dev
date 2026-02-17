@@ -2,16 +2,36 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\{
+    Builder,
+    Factories\HasFactory,
+    Model,
+    SoftDeletes,
+};
 
 class Student extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'parent_id',
+        'admission_no',
+        'class_id',
+        'section_id',
+        'gender',
+        'dob',
+        'address',
+        'student_status',
+        'phone',
+    ];
 
     /**
      * Get the user associated with the student.
@@ -104,10 +124,11 @@ class Student extends Model
     public function scopeSearch(Builder $query, array $keywords)
     {
         // Check if any other filters are active (excluding keyword)
+        // 0 is default value in front end options. 3 is default value for status options
         $hasOtherFilters = ($keywords['class'] != 0)
             || ($keywords['section'] != 0)
             || ($keywords['gender'] != 0)
-            || ($keywords['status'] != 0)
+            || ($keywords['status'] != 3)
             || ($keywords['admission_year'] != 0);
 
         return $query
@@ -123,7 +144,7 @@ class Student extends Model
             ->when($keywords['gender'] != 0, function ($query) use ($keywords) {
                 $query->where('students.gender', $keywords['gender']);
             })
-            ->when($keywords['status'] != 0, function ($query) use ($keywords) {
+            ->when($keywords['status'] != 3, function ($query) use ($keywords) {
                 $query->where('students.student_status', $keywords['status']);
             })
             ->when($keywords['admission_year'] != 0, function ($query) use ($keywords) {

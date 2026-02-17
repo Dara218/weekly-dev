@@ -7,9 +7,9 @@ namespace App\Enum;
  */
 enum InvoiceStatus: string
 {
-    case UNPAID = 'Unpaid';
-    case PAID = 'Paid';
-    case PARTIAL = 'Partial';
+    case UNPAID = 'UNPAID';
+    case PAID = 'PAID';
+    case PARTIAL = 'PARTIAL';
 
     /**
      * Get the list of all enum values.

@@ -26,6 +26,22 @@ class StudentRepository extends BaseRepository implements StudentInterface
      */
     public function getStudentsBySearch(array $keywords)
     {
-        return Student::query()->search($keywords)->get();
+        return Student::query()
+            ->search($keywords)
+            ->get();
+    }
+
+    /**
+     * Get the total student count for the given academic year.
+     *
+     * @param int $academicYearId
+     *
+     * @return int
+     */
+    public function getStudentCountByCurrentYear(int $academicYearId)
+    {
+        return $this->model->whereHas('class', function ($query) use ($academicYearId) {
+            $query->where('academic_year_id', $academicYearId);
+        })->count() + 1;
     }
 }

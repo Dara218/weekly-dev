@@ -37,8 +37,6 @@ class GetStudentController extends Controller
         try {
             $searchKeyword = $request->all();
 
-            // Info($searchKeyword);
-
             return $this->studentService->getStudents($searchKeyword);
         } catch (\Exception $error) {
             LogService::error('Error fetching students data.', [

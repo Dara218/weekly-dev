@@ -7,9 +7,9 @@ namespace App\Enum;
  */
 enum FeeTypeFrequency: string
 {
-    case MONTHLY = 'Monthly';
-    case TERM = 'Term';
-    case YEARLY = 'Yearly';
+    case MONTHLY = 'MONTHLY';
+    case TERM = 'TERM';
+    case YEARLY = 'YEARLY';
 
     /**
      * Get the list of all enum values.
