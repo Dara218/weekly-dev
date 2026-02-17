@@ -163,7 +163,7 @@ Below are detailed specifications **page by page**.
 * Class → Section
 * Roll Number
 * Parent Name
-* Status (Active/Alumni)
+* Status (Active/Inactive)
 * Actions (View, Edit, Delete)
 
 ### **Filters**

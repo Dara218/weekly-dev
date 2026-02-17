@@ -5,4 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});Route::post('login', [LoginController::class, 'authenticate'])->name('authenticate');
+});
+
+Route::post('login', [LoginController::class, 'authenticate'])->name('authenticate');

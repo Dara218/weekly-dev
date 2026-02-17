@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('gender', Gender::list());
             $table->date('dob')->comment('Date of birth: 2010-05-15');
             $table->text('address');
+            $table->string('phone', 255)->nullable();
             $table->enum('student_status', StudentStatus::list());
             $table->timestamps();
             $table->softDeletes();

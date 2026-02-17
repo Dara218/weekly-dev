@@ -8,9 +8,9 @@ namespace App\Enum;
 enum AnnouncementTargetGroup: string
 {
     case ALL = 'All';
-    case TEACHERS = 'Teachers';
-    case STUDENTS = 'Students';
-    case PARENTS = 'Parents';
+    case TEACHERS = 'TEACHERS';
+    case STUDENTS = 'STUDENTS';
+    case PARENTS = 'PARENTS';
 
     /**
      * Get the list of all enum values.
