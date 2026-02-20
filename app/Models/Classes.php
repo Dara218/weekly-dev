@@ -11,6 +11,16 @@ class Classes extends Model
     use HasFactory;
 
     /**
+     * Get the section associated with the student.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class);
+    }
+
+    /**
      * Get the students in this class.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\StudentInterface;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Collection;
 
 class StudentRepository extends BaseRepository implements StudentInterface
 {
@@ -24,7 +25,7 @@ class StudentRepository extends BaseRepository implements StudentInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getStudentsBySearch(array $keywords)
+    public function getStudentsBySearch(array $keywords): Collection
     {
         return Student::query()
             ->search($keywords)
@@ -38,7 +39,7 @@ class StudentRepository extends BaseRepository implements StudentInterface
      *
      * @return int
      */
-    public function getStudentCountByCurrentYear(int $academicYearId)
+    public function getStudentCountByCurrentYear(int $academicYearId): int
     {
         return $this->model->whereHas('class', function ($query) use ($academicYearId) {
             $query->where('academic_year_id', $academicYearId);

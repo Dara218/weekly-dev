@@ -82,7 +82,7 @@ class CreateUserRequest extends FormRequest
      *
      * @return array<mixed>
      */
-    private function getUserTypeSpecificRules(string $userRole)
+    public function getUserTypeSpecificRules(string $userRole): array
     {
         return match ($userRole) {
             UserRole::STUDENT->value => [
