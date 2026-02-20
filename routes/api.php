@@ -5,6 +5,7 @@ use App\Http\Controllers\Parents\GetParentsController;
 use App\Http\Controllers\Student\GetStudentController;
 use App\Http\Controllers\User\{
     CreateUserController,
+    UpdateUserController,
     UserController,
 };
 use Illuminate\Support\Facades\Route;
@@ -18,7 +19,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::prefix('user')->name('user.')->group(function() {
         // Get the auth user
         Route::get('/', [UserController::class,'getUser'])->name('get-user');
-        Route::post('create', [CreateUserController::class, 'store'])->name('store');
+        Route::post('store', [CreateUserController::class, 'store'])->name('store');
+        Route::put('update/{id}', [UpdateUserController::class, 'update'])->name('update');
     });
 
     // Students route

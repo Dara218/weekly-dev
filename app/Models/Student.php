@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\{
     Model,
     SoftDeletes,
 };
+use Illuminate\Database\Eloquent\Relations\{
+    BelongsTo,
+    HasMany,
+};
 
 class Student extends Model
 {
@@ -38,7 +42,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -48,7 +52,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Parents::class, 'parent_id');
     }
@@ -58,7 +62,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function class()
+    public function class(): BelongsTo
     {
         return $this->belongsTo(Classes::class);
     }
@@ -68,7 +72,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function section()
+    public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
     }
@@ -78,7 +82,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function attendanceDetails()
+    public function attendanceDetails(): HasMany
     {
         return $this->hasMany(AttendanceDetail::class);
     }
@@ -88,7 +92,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function grades()
+    public function grades(): HasMany
     {
         return $this->hasMany(Grade::class);
     }
@@ -98,7 +102,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function invoices()
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
@@ -108,7 +112,7 @@ class Student extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function issuedBooks()
+    public function issuedBooks(): HasMany
     {
         return $this->hasMany(IssuedBook::class);
     }
@@ -121,7 +125,7 @@ class Student extends Model
      *
      * @return Builder
      */
-    public function scopeSearch(Builder $query, array $keywords)
+    public function scopeSearch(Builder $query, array $keywords): Builder
     {
         // Check if any other filters are active (excluding keyword)
         // 0 is default value in front end options. 3 is default value for status options
@@ -132,23 +136,22 @@ class Student extends Model
             || ($keywords['admission_year'] != 0);
 
         return $query
-            ->join('users', 'students.user_id', '=', 'users.id')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
-            ->join('academic_years', 'classes.academic_year_id', '=', 'academic_years.id')
             ->when($keywords['class'] != 0, function ($query) use ($keywords) {
-                $query->where('students.class_id', $keywords['class']);
+                $query->where('class_id', $keywords['class']);
             })
             ->when($keywords['section'] != 0, function ($query) use ($keywords) {
-                $query->where('students.section_id', $keywords['section']);
+                $query->where('section_id', $keywords['section']);
             })
             ->when($keywords['gender'] != 0, function ($query) use ($keywords) {
-                $query->where('students.gender', $keywords['gender']);
+                $query->where('gender', $keywords['gender']);
             })
             ->when($keywords['status'] != 3, function ($query) use ($keywords) {
-                $query->where('students.student_status', $keywords['status']);
+                $query->where('student_status', $keywords['status']);
             })
             ->when($keywords['admission_year'] != 0, function ($query) use ($keywords) {
-                $query->where('academic_years.name', $keywords['admission_year']);
+                $query->whereHas('class.academicYear', function ($q) use ($keywords) {
+                    $q->where('name', $keywords['admission_year']);
+                });
             })
             ->when(
                 array_key_exists('name_or_admission_number_keyword', $keywords),
@@ -165,8 +168,11 @@ class Student extends Model
                     // If keyword has value, filter by it
                     if ($keyword !== '') {
                         $query->where(function ($query) use ($keyword) {
-                            $query->where('users.name', 'LIKE', "%{$keyword}%")
-                                ->orWhere('students.admission_no', 'LIKE', "%{$keyword}%");
+                            $query->whereHas('user', function ($q) use ($keyword) {
+                                $q->where('first_name', 'LIKE', "%{$keyword}%")
+                                ->orWhere('middle_name', 'LIKE', "%{$keyword}%")
+                                ->orWhere('last_name', 'LIKE', "%{$keyword}%");
+                            })->orWhere('admission_no', 'LIKE', "%{$keyword}%");
                         });
                     }
                     // If keyword is empty but other filters exist, skip keyword filter (allow other filters to work)

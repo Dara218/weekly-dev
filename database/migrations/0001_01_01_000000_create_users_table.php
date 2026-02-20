@@ -17,7 +17,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id')->comment('User ID');
-            $table->string('name', 255)->comment('Full Name');
+            $table->string('first_name', 255)->comment('First Name');
+            $table->string('middle_name', 255)->comment('Middle Name');
+            $table->string('last_name', 255)->comment('Last Name');
             $table->string('email', 255)->unique()->comment('Login Email');
             $table->string('password', 255)->comment('Hashed Password');
             $table->enum('role', UserRole::list())->comment('System Role: Admin, Teacher, Student, Parent');

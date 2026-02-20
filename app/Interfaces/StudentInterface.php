@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use Illuminate\Database\Eloquent\Collection;
+
 interface StudentInterface extends BaseInterface
 {
     /**
@@ -11,7 +13,7 @@ interface StudentInterface extends BaseInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getStudentsBySearch(array $keywords);
+    public function getStudentsBySearch(array $keywords): Collection;
 
     /**
      * Get the total student count for the given academic year.
@@ -20,5 +22,5 @@ interface StudentInterface extends BaseInterface
      *
      * @return int
      */
-    public function getStudentCountByCurrentYear(int $academicYearId);
+    public function getStudentCountByCurrentYear(int $academicYearId): int;
 }

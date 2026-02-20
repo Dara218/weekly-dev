@@ -3,16 +3,12 @@
 namespace App\Services\User;
 
 use App\Enum\UserRole;
-use App\Interfaces\{
-    ClassesInterface,
-    UserInterface,
-};
+use App\Interfaces\UserInterface;
 use App\Models\User;
-use App\Services\Common\AdmissionNumberService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class CreateUserService
+class UpdateUserService
 {
     /**
      * Repository interface for user data operations.
@@ -32,23 +28,24 @@ class CreateUserService
     }
 
     /**
-     * Create a user with the specified type.
+     * Update a user with the specified type.
      *
+     * @param int $id The id of the student (students.id)
      * @param array<string, mixed> $data
      *
      * @return bool
      *
      * @throws \Exception
      */
-    public function handleCreateUser(array $data): bool
+    public function handleUpdateUser(int $id, array $data): bool
     {
         DB::beginTransaction();
 
         try {
             /** @var User $user */
-            $user = $this->createUserData($data);
+            $user = $this->updateUserData($data, $id);
 
-            $this->createUserTypeData($user, $data);
+            $this->updateUserTypeData($user, $data);
 
             DB::commit();
 
@@ -61,68 +58,69 @@ class CreateUserService
     }
 
     /**
-     * Create the base user record.
+     * Update the base user record.
      *
      * @param array<string, mixed> $data
+     * @param int $id The id of the student (students.id)
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    protected function createUserData(array $data): Model
+    protected function updateUserData(array $data, int $id): Model
     {
-        return $this->userInterface->create([
+        $userData = [
             'first_name' => $data['first_name'],
             'middle_name' => $data['middle_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
             'role' => $data['role'],
             'profile_image' => $data['profile_image'] ?? null,
             'is_active' => $data['status'],
-        ]);
+        ];
+
+        if (!empty($data['password'])) {
+            $userData['password'] = bcrypt($data['password']);
+        }
+
+        return $this->userInterface->update($userData, $id);
     }
 
     /**
-     * Create the user-type specific record.
+     * Update the user-type specific record.
      *
      * @param \App\Models\User $user
      * @param array<string, mixed> $data
      *
      * @return mixed
      */
-    protected function createUserTypeData(User $user, array $data): mixed
+    protected function updateUserTypeData(User $user, array $data): mixed
     {
         $role = $data['role'];
 
         return match ($role) {
-            UserRole::STUDENT->value => $this->createStudentData($user, $data),
-            UserRole::TEACHER->value => $this->createTeacherData($user, $data),
-            UserRole::PARENT->value => $this->createParentData($user, $data),
+            UserRole::STUDENT->value => $this->updateStudentData($user, $data),
+            UserRole::TEACHER->value => $this->updateTeacherData($user, $data),
+            UserRole::PARENT->value => $this->updateParentData($user, $data),
             UserRole::ADMIN->value => null, // Admin has no additional table
             default => throw new \InvalidArgumentException("Invalid user role: {$role}"),
         };
     }
 
     /**
-     * Create the student record for the user.
+     * Update the student record for the user.
      *
      * @param \App\Models\User $user
      * @param array<string, mixed> $data
      *
      * @return void
      */
-    protected function createStudentData(User $user, array $data): void
+    protected function updateStudentData(User $user, array $data): void
     {
-        $admissionYearId = app(ClassesInterface::class)
-            ->find($data['class_id'])
-            ->academic_year_id;
-
-        $user->student()->create([
+        $user->student()->update([
             'user_id' => $user->id,
             'gender' => $data['gender'],
             'dob' => $data['dob'],
             'class_id' => $data['class_id'],
             'section_id' => $data['section_id'],
-            'admission_no' => app(AdmissionNumberService::class)->generate($admissionYearId),
             'parent_id' => $data['parent_id'],
             'phone' => $data['phone'],
             'student_status' => $data['status'],
@@ -131,31 +129,31 @@ class CreateUserService
     }
 
     /**
-     * Create the teacher record for the user.
+     * Update the teacher record for the user.
      *
      * @param \App\Models\User $user
      * @param array<string, mixed> $data
      *
      * @return void
      */
-    protected function createTeacherData(User $user, array $data): void
+    protected function updateTeacherData(User $user, array $data): void
     {
-        $user->teacher()->create([
+        $user->teacher()->update([
 
         ]);
     }
 
     /**
-     * Create the parent record for the user.
+     * Update the parent record for the user.
      *
      * @param \App\Models\User $user
      * @param array<string, mixed> $data
      *
      * @return void
      */
-    protected function createParentData(User $user, array $data): void
+    protected function updateParentData(User $user, array $data): void
     {
-        $user->parent()->create([
+        $user->parent()->update([
 
         ]);
     }

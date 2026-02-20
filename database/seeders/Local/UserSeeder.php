@@ -26,7 +26,9 @@ class UserSeeder extends Seeder
         $user = [
             [
                 // Admin
-                'name' => 'Admin User',
+                'first_name' => 'Admin',
+                'middle_name' => 'TestMidA',
+                'last_name' => 'User',
                 'email' => 'admin_user@example.com',
                 'password' => bcrypt('Qwerty123@'),
                 'role' => UserRole::ADMIN->value,
@@ -36,7 +38,9 @@ class UserSeeder extends Seeder
             ],
             [
                 // Student
-                'name' => 'John Student',
+                'first_name' => 'John',
+                'middle_name' => 'TestMidS',
+                'last_name' => 'Student',
                 'email' => 'john_student@example.com',
                 'password' => bcrypt('Qwerty123@'),
                 'role' => UserRole::STUDENT->value,
@@ -46,7 +50,9 @@ class UserSeeder extends Seeder
             ],
             [
                 // Teacher
-                'name' => 'John Teacher',
+                'first_name' => 'John',
+                'middle_name' => 'TestMidT',
+                'last_name' => 'Teacher',
                 'email' => 'john_teacher@example.com',
                 'password' => bcrypt('Qwerty123@'),
                 'role' => UserRole::TEACHER->value,
@@ -56,7 +62,9 @@ class UserSeeder extends Seeder
             ],
             [
                 // Parent
-                'name' => 'John Parent',
+                'first_name' => 'John',
+                'middle_name' => 'TestMidP',
+                'last_name' => 'Parent',
                 'email' => 'john_parent@example.com',
                 'password' => bcrypt('Qwerty123@'),
                 'role' => UserRole::PARENT->value,

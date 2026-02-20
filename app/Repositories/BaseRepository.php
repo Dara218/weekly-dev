@@ -54,10 +54,10 @@ class BaseRepository implements BaseInterface
      */
     public function update(array $data, int $id): Model
     {
-        $data = $this->find($id);
-        $this->model->update($data);
+        $model = $this->find($id);
+        $model->update($data);
 
-        return $data;
+        return $model;
     }
 
     /**
