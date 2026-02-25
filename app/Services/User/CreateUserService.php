@@ -2,12 +2,18 @@
 
 namespace App\Services\User;
 
-use App\Enum\UserRole;
+use App\Enum\{
+    StudentSectionEnrollmentStatus,
+    UserRole,
+};
 use App\Interfaces\{
     ClassesInterface,
     UserInterface,
 };
-use App\Models\User;
+use App\Models\{
+    Student,
+    User,
+};
 use App\Services\Common\AdmissionNumberService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -116,8 +122,8 @@ class CreateUserService
             ->find($data['class_id'])
             ->academic_year_id;
 
-        $user->student()->create([
-            'user_id' => $user->id,
+        /** @var Student $student */
+        $student = $user->student()->create([
             'gender' => $data['gender'],
             'dob' => $data['dob'],
             'class_id' => $data['class_id'],
@@ -127,6 +133,27 @@ class CreateUserService
             'phone' => $data['phone'],
             'student_status' => $data['status'],
             'address' => $data['address'],
+        ]);
+
+        // Create enrollment data
+        $this->createSectionEnrollmentData($student, $admissionYearId);
+    }
+
+    /**
+     * Create the section enrollment data for the student.
+     *
+     * @param Student $student
+     * @param int $admissionYearId
+     *
+     * @return void
+     */
+    protected function createSectionEnrollmentData(Student $student, int $admissionYearId): void
+    {
+        // Create enrollment data
+        $student->sectionEnrollments()->create([
+            'section_id' => $student->section_id,
+            'academic_year_id' => $admissionYearId,
+            'status' => StudentSectionEnrollmentStatus::PENDING->value,
         ]);
     }
 
