@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\{
 };
 use Illuminate\Database\Eloquent\Relations\{
     BelongsTo,
+    BelongsToMany,
     HasMany,
 };
 
@@ -118,6 +119,30 @@ class Student extends Model
     }
 
     /**
+     * Enrollment history for this student (student_section_enrollments).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sectionEnrollments(): HasMany
+    {
+        return $this->hasMany(StudentSectionEnrollment::class);
+    }
+
+    /**
+     * Sections this student is/was enrolled in via student_section_enrollments.
+     *
+     * Pivot columns: academic_year_id, status
+     *
+     * @return BelongsToMany<Section, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>
+     */
+    public function enrolledSections(): BelongsToMany
+    {
+        return $this->belongsToMany(Section::class, 'student_section_enrollments')
+            ->withPivot(['academic_year_id', 'status']) // Include columns
+            ->withTimestamps();
+    }
+
+    /**
      * Scope a query to filter students by the given keywords.
      *
      * @param Builder $query
@@ -183,6 +208,8 @@ class Student extends Model
                 'class',
                 'parent.user',
                 'section',
+                'sectionEnrollments.academicYear',
+                'sectionEnrollments.section.class',
             );
     }
 }
