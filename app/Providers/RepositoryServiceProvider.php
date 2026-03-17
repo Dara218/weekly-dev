@@ -39,5 +39,9 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Interfaces\ClassesInterface::class,
             \App\Repositories\ClassesRepository::class,
         );
+        $this->app->bind(
+            \App\Interfaces\TeacherClassAssignmentInterface::class,
+            \App\Repositories\TeacherClassAssignmentRepository::class,
+        );
     }
 }

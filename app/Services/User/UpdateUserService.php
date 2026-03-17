@@ -123,7 +123,7 @@ class UpdateUserService
             'section_id' => $data['section_id'],
             'parent_id' => $data['parent_id'],
             'phone' => $data['phone'],
-            'student_status' => $data['status'],
+            'student_status' => (string) $data['status'],
             'address' => $data['address'],
         ]);
     }

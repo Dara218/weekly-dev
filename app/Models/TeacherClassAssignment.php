@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $teacher_id
+ * @property int $class_id
+ * @property int $section_id
+ */
 class TeacherClassAssignment extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

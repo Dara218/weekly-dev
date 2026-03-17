@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\{
+    BulkCreateUserRequest,
+    CreateUserRequest,
+};
 use App\Services\Common\LogService;
 use App\Services\User\CreateUserService;
 use Exception;
@@ -47,6 +50,36 @@ class CreateUserController extends Controller
             ]);
         } catch (Exception $error) {
             LogService::error('Error creating a student.', [
+                'error' => $error->getMessage(),
+                'trace' => $error->getTraceAsString(),
+            ]);
+
+            return response([
+                'success' => false,
+                'message' => 'Internal server error. Try again later.',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Create new users.
+     *
+     * @param BulkCreateUserRequest $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkStore(BulkCreateUserRequest $request): Response
+    {
+        try {
+            $this->createUserService
+                ->handleBulkCreateUser($request->validated('rows'));
+
+            return response([
+                'success' => true,
+                'message' => 'Students created successfully.',
+            ]);
+        } catch (Exception $error) {
+            LogService::error('Error creating students', [
                 'error' => $error->getMessage(),
                 'trace' => $error->getTraceAsString(),
             ]);

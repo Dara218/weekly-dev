@@ -51,10 +51,7 @@ class CreateUserService
         DB::beginTransaction();
 
         try {
-            /** @var User $user */
-            $user = $this->createUserData($data);
-
-            $this->createUserTypeData($user, $data);
+            $this->persistUser($data);
 
             DB::commit();
 
@@ -64,6 +61,45 @@ class CreateUserService
 
             throw $error;
         }
+    }
+
+    /**
+     * Create a bulk user with the specified type.
+     *
+     * @param array<int, array<string, mixed>> $rows The rows of each student data
+     *
+     * @return void
+     */
+    public function handleBulkCreateUser(array $rows): void
+    {
+        DB::beginTransaction();
+
+        try {
+            foreach ($rows as $row) {
+                $this->persistUser($row);
+            }
+
+            DB::commit();
+        } catch (\Exception $error) {
+            DB::rollBack();
+
+            throw $error;
+        }
+    }
+
+    /**
+     * Persist base user and role-specific records.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
+    protected function persistUser(array $data): void
+    {
+        /** @var User $user */
+        $user = $this->createUserData($data);
+
+        $this->createUserTypeData($user, $data);
     }
 
     /**
@@ -131,7 +167,7 @@ class CreateUserService
             'admission_no' => app(AdmissionNumberService::class)->generate($admissionYearId),
             'parent_id' => $data['parent_id'],
             'phone' => $data['phone'],
-            'student_status' => $data['status'],
+            'student_status' => (string) $data['status'],
             'address' => $data['address'],
         ]);
 
