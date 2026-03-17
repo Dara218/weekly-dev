@@ -5,6 +5,7 @@ use App\Http\Controllers\Parents\GetParentsController;
 use App\Http\Controllers\Student\GetStudentController;
 use App\Http\Controllers\User\{
     CreateUserController,
+    DeleteUserController,
     UpdateUserController,
     UserController,
 };
@@ -19,8 +20,21 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::prefix('user')->name('user.')->group(function() {
         // Get the auth user
         Route::get('/', [UserController::class,'getUser'])->name('get-user');
-        Route::post('store', [CreateUserController::class, 'store'])->name('store');
+
+        // Create
+        Route::controller(CreateUserController::class)->group(function() {
+            Route::post('store', 'store')->name('store');
+            Route::post('bulk-store', 'bulkStore')->name('bulkStore');
+        });
+
+        // Update
         Route::put('update/{id}', [UpdateUserController::class, 'update'])->name('update');
+
+        // Delete
+        Route::controller(DeleteUserController::class)->group(function() {
+            Route::delete('delete/{id}', 'delete')->name('store');
+            Route::delete('bulk-delete', 'bulkDelete')->name('bulkDelete');
+        });
     });
 
     // Students route
