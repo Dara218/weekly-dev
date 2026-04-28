@@ -2,8 +2,10 @@
 
 namespace App\Observers;
 
-use App\Models\Student;
-use App\Models\User;
+use App\Models\{
+    Student,
+    User,
+};
 
 class UserObserver
 {
