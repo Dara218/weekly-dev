@@ -77,4 +77,17 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Paths
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the custom paths used in your application.
+    | This can be useful for defining paths to be used across your
+    | application that can be managed centrally.
+    |
+    */
+    'paths' => [
+        'student_documents' => 'user/student/documents/',
+    ],
 ];

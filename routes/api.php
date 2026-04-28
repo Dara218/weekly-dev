@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\Authentication\ResetPasswordController;
 use App\Http\Controllers\Parents\GetParentsController;
+use App\Http\Controllers\Student\DeleteStudentFileController;
 use App\Http\Controllers\Student\GetStudentController;
+use App\Http\Controllers\Student\UploadStudentFileController;
 use App\Http\Controllers\User\{
     CreateUserController,
     DeleteUserController,
     UpdateUserController,
     UserController,
 };
+use App\Http\Controllers\User\Document\GetDocumentController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
@@ -35,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::delete('delete/{id}', 'delete')->name('store');
             Route::delete('bulk-delete', 'bulkDelete')->name('bulkDelete');
         });
+
+        // File
+        Route::prefix('file')->name('file.')->group(function() {
+            Route::get('get/{userId}', [GetDocumentController::class, 'get'])->name('get');
+        });
     });
 
     // Students route
@@ -42,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function() {
         ->name('students.')
         ->group(function() {
             Route::get('/', [GetStudentController::class, 'get'])->name('get');
+            Route::post('file/upload', [UploadStudentFileController::class, 'upload'])->name('upload');
+            Route::delete('file/delete/{fileId}', [DeleteStudentFileController::class, 'delete'])->name('delete');
         });
 
     // Parents route
