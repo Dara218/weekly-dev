@@ -7,4 +7,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('login', [LoginController::class, 'authenticate'])->name('authenticate');
+Route::controller(LoginController::class)->group(function () {
+    // Guest route
+    Route::post('login', 'authenticate')->name('auth.authenticate');
+
+    // Authenticated route
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', 'logout')->name('auth.logout');
+    });
+});
