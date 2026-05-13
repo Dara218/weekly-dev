@@ -7,6 +7,7 @@ use App\Http\Requests\Authentication\LoginRequest;
 use App\Services\Authentication\LoginService;
 use App\Services\Common\LogService;
 use App\Services\User\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -80,6 +81,37 @@ class LoginController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $error) {
             LogService::error('Error logging-in user.', [
+                'error' => $error->getMessage(),
+                'trace' => $error->getTraceAsString(),
+            ]);
+
+            return response([
+                'success' => false,
+                'message' => 'Internal server error. Try again later.',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Logout the user.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request): Response
+    {
+        try {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return response([
+                'success' => true,
+                'message' => 'Successfully logged out.',
+            ]);
+        } catch (\Exception $error) {
+            LogService::error('Error logging-out user.', [
                 'error' => $error->getMessage(),
                 'trace' => $error->getTraceAsString(),
             ]);
