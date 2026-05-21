@@ -145,20 +145,17 @@ class Student extends Model
     /**
      * Scope a query to filter students by the given keywords.
      *
-     * @param Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @param array<string, mixed> $keywords
      *
-     * @return Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSearch(Builder $query, array $keywords): Builder
     {
-        // Check if any other filters are active (excluding keyword)
-        // 0 is default value in front end options. 3 is default value for status options
-        $hasOtherFilters = ($keywords['class'] != 0)
-            || ($keywords['section'] != 0)
-            || ($keywords['gender'] != 0)
-            || ($keywords['status'] != 3)
-            || ($keywords['admission_year'] != 0);
+        // Get students connected with current logged in teacher
+        $query->whereHas('section', function ($query) {
+            $query->where('teacher_id', auth()->user()->teacher->id);
+        });
 
         return $query
             ->when($keywords['class'] != 0, function ($query) use ($keywords) {
@@ -178,31 +175,19 @@ class Student extends Model
                     $q->where('name', $keywords['admission_year']);
                 });
             })
-            ->when(
-                array_key_exists('name_or_admission_number_keyword', $keywords),
-                function ($query) use ($keywords, $hasOtherFilters) {
-                    $keyword = trim($keywords['name_or_admission_number_keyword'] ?? '');
+            ->when(!empty($keywords['name_or_admission_number_keyword']), function ($query) use ($keywords) {
+                $search = $keywords['name_or_admission_number_keyword'];
 
-                    // If keyword is empty and no other filters are set, return no results
-                    if ($keyword === '' && !$hasOtherFilters) {
-                        $query->whereRaw('1 = 0');
-
-                        return;
-                    }
-
-                    // If keyword has value, filter by it
-                    if ($keyword !== '') {
-                        $query->where(function ($query) use ($keyword) {
-                            $query->whereHas('user', function ($q) use ($keyword) {
-                                $q->where('first_name', 'LIKE', "%{$keyword}%")
-                                ->orWhere('middle_name', 'LIKE', "%{$keyword}%")
-                                ->orWhere('last_name', 'LIKE', "%{$keyword}%");
-                            })->orWhere('admission_no', 'LIKE', "%{$keyword}%");
-                        });
-                    }
-                    // If keyword is empty but other filters exist, skip keyword filter (allow other filters to work)
-                }
-            )
+                $query->where(function ($query) use ($search) {
+                    $query->whereHas('user', function ($q) use ($search) {
+                        $q->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('middle_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%")
+                        ->orWhereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
+                        ->orWhere('admission_no', 'LIKE', "%{$search}%");
+                    });
+                });
+            })
             ->with(
                 'user',
                 'class',

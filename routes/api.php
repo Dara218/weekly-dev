@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\Authentication\ResetPasswordController;
 use App\Http\Controllers\Parents\GetParentsController;
-use App\Http\Controllers\Student\DeleteStudentFileController;
-use App\Http\Controllers\Student\GetStudentController;
-use App\Http\Controllers\Student\UploadStudentFileController;
+use App\Http\Controllers\Student\{
+    DeleteStudentFileController,
+    GetStudentController,
+    UploadStudentFileController,
+};
+use App\Http\Controllers\Teacher\GetTeacherController;
 use App\Http\Controllers\User\{
     CreateUserController,
     DeleteUserController,
@@ -59,5 +62,12 @@ Route::middleware('auth:sanctum')->group(function() {
         ->name('parents.')
         ->group(function() {
             Route::get('/', [GetParentsController::class, 'get'])->name('get');
+        });
+
+    // Teachers route
+    Route::prefix('teachers')
+        ->name('teachers.')
+        ->group(function() {
+            Route::get('/', [GetTeacherController::class, 'get'])->name('get');
         });
 });

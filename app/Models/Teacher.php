@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\{
+    Builder,
+    Factories\HasFactory,
+    Model,
+    SoftDeletes,
+};
 
 class Teacher extends Model
 {
@@ -70,5 +73,42 @@ class Teacher extends Model
     public function teacherClassAssignments()
     {
         return $this->hasMany(TeacherClassAssignment::class);
+    }
+
+    /**
+     * Scope a query to filter teachers by the given keywords.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array<string, mixed> $keywords
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, array $keywords): Builder
+    {
+        return $query
+            ->when(!empty($keywords['subject_id']), function ($query) use ($keywords) {
+                $query->whereHas('subjects', function ($q) use ($keywords) {
+                    $q->where('id', $keywords['subject_id']);
+                });
+            })
+            ->when(array_key_exists('status', $keywords), function ($query) use ($keywords) {
+                $query->whereHas('user', function ($q) use ($keywords) {
+                    $q->where('is_active', $keywords['status']);
+                });
+            })
+            ->when(!empty($keywords['search']), function ($query) use ($keywords) {
+                $search = $keywords['search'];
+
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q2) use ($search) {
+                        $q2->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('middle_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%")
+                        ->orWhereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->orWhere('employee_code', 'LIKE', "%{$search}%");
+                });
+            })
+            ->with('user');
     }
 }

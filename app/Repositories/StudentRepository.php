@@ -19,11 +19,7 @@ class StudentRepository extends BaseRepository implements StudentInterface
     }
 
     /**
-     * Get students filtered by the given search keywords.
-     *
-     * @param array<mixed> $keywords
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * {@inheritDoc}
      */
     public function getStudentsBySearch(array $keywords): Collection
     {
@@ -33,11 +29,7 @@ class StudentRepository extends BaseRepository implements StudentInterface
     }
 
     /**
-     * Get the total student count for the given academic year.
-     *
-     * @param int $academicYearId
-     *
-     * @return int
+     * {@inheritDoc}
      */
     public function getStudentCountByCurrentYear(int $academicYearId): int
     {
