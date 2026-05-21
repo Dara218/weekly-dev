@@ -8,6 +8,7 @@ use Database\Seeders\Local\{
     ParentSeeder,
     SectionSeeder,
     StudentSeeder,
+    SubjectSeeder,
     TeacherClassAssignmentSeeder,
     TeacherSeeder,
     UserSeeder,
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder
             TeacherClassAssignmentSeeder::class,
             ParentSeeder::class,
             StudentSeeder::class,
+            SubjectSeeder::class,
         ]);
     }
 }

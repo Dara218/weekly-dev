@@ -47,5 +47,13 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Interfaces\UserFileInterface::class,
             \App\Repositories\UserFileRepository::class,
         );
+        $this->app->bind(
+            \App\Interfaces\TeacherInterface::class,
+            \App\Repositories\TeacherRepository::class,
+        );
+        $this->app->bind(
+            \App\Interfaces\SubjectInterface::class,
+            \App\Repositories\SubjectRepository::class,
+        );
     }
 }

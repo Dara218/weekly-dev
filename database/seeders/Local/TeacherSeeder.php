@@ -3,12 +3,12 @@
 namespace Database\Seeders\Local;
 
 use App\Enum\Subjects;
+use App\Enum\UserRole;
 use App\Helpers\TeacherDataFormatHelper;
 use App\Interfaces\UserInterface;
 use App\Models\Teacher;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class TeacherSeeder extends Seeder
 {
@@ -22,17 +22,23 @@ class TeacherSeeder extends Seeder
         // Truncate the table to prevent duplicate data
         Teacher::truncate();
 
-        $userId = app(UserInterface::class)->find(3)->id; // ID:3 from UserSeeder
-        $sequenceNumber = Str::padLeft(1, 5, '0');
+        for ($index = 1; $index <= 5; $index++) {
+            $user = app(UserInterface::class)->create([
+                'email' => "john_teacher{$index}@example.com",
+                'first_name' => "Teacher{$index}",
+                'password' => bcrypt('Qwerty123@'),
+                'last_name' => "Test",
+                'role' => UserRole::TEACHER,
+                'is_active' => $index % 2,
+            ]);
 
-        $teacher = [
-            'user_id' => $userId,
-            'employee_code' => TeacherDataFormatHelper::employeeCodeFormatter((int) $sequenceNumber),
-            'phone' => '09123456789',
-            'specialization' => Subjects::HISTORY->value,
-            'experience_years' => 4,
-        ];
-
-        Teacher::factory()->create($teacher);
+            Teacher::create([
+                'user_id' => $user->id,
+                'employee_code' => TeacherDataFormatHelper::employeeCodeFormatter($index),
+                'phone' => '0912345678' . $index,
+                'specialization' => Subjects::cases()[array_rand(Subjects::cases())]->value,
+                'experience_years' => rand(1, 10),
+            ]);
+        }
     }
 }
