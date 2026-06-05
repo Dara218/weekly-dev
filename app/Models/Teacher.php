@@ -16,6 +16,20 @@ class Teacher extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'employee_code',
+        'phone',
+        'address',
+        'specialization',
+        'experience_years'
+    ];
+
+    /**
      * Get the user associated with the teacher.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -109,6 +123,6 @@ class Teacher extends Model
                     ->orWhere('employee_code', 'LIKE', "%{$search}%");
                 });
             })
-            ->with('user');
+            ->with('user', 'teacherClassAssignments');
     }
 }

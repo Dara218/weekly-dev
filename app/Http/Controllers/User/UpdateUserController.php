@@ -38,16 +38,15 @@ class UpdateUserController extends Controller
     public function update(int $id, UpdateUserRequest $request): Response
     {
         try {
-            $data = $this->updateUserService
+            $this->updateUserService
                 ->handleUpdateUser($id, $request->validated());
 
             return response([
                 'success' => true,
-                'message' => 'Student updated successfully.',
-                'data' => $data,
+                'message' => 'User updated successfully.',
             ]);
         } catch (Exception $error) {
-            LogService::error('Error updating a student.', [
+            LogService::error('Error updating a user.', [
                 'error' => $error->getMessage(),
                 'trace' => $error->getTraceAsString(),
             ]);

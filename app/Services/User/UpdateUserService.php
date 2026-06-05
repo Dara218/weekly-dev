@@ -138,9 +138,36 @@ class UpdateUserService
      */
     protected function updateTeacherData(User $user, array $data): void
     {
-        $user->teacher()->update([
+        $teacher = $user->teacher;
 
+        $teacher->update([
+            'user_id' => $user->id,
+            'employee_code' => $teacher->employee_code,
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+            'specialization' => $data['specialization'],
+            'experience_years' => $data['experience_years'],
         ]);
+
+        // Add/Update teacher class assignment
+        $ids = collect($data['classes'])
+            ->map(function ($class) use ($teacher) {
+                return $teacher->teacherClassAssignments()
+                    ->updateOrCreate(
+                        ['id' => $class['id'] ?? null],
+                        [
+                            'class_id' => $class['class_id'],
+                            'section_id' => $class['section_id'],
+                            'academic_year_id' => $class['academic_year_id'],
+                        ],
+                    )
+                    ->id;
+            })
+            ->all();
+
+        $teacher->teacherClassAssignments()
+            ->whereNotIn('id', $ids)
+            ->delete();
     }
 
     /**
