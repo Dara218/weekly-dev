@@ -4,6 +4,7 @@ namespace App\Http\Requests\User;
 
 use App\Enum\{
     Gender,
+    Subjects,
     TeacherClassAssignmentStatus,
     UserRole,
 };
@@ -84,6 +85,16 @@ class CreateUserRequest extends FormRequest
      */
     public function getUserTypeSpecificRules(string $userRole): array
     {
+        $phoneRules = [
+            'nullable',
+            'string',
+            'regex:/^(09\d{9}|\+639\d{9})$/',
+        ];
+        $addressRules = [
+            'required',
+            'max:' . config('constant.validation.max.address'),
+        ];
+
         return match ($userRole) {
             UserRole::STUDENT->value => [
                 'gender' => [
@@ -116,21 +127,29 @@ class CreateUserRequest extends FormRequest
                         $query->where('id', $this->parent_id);
                     }),
                 ],
-                'phone' => [
-                    'nullable',
-                    'string',
-                    'regex:/^(09\d{9}|\+639\d{9})$/', // Accepts formats: 09XXXXXXXXX or +639XXXXXXXXX
-                ],
-                'address' => [
-                    'required',
-                    'max:' . config('constant.validation.max.address'), // 100
-                ],
+                'phone' => $phoneRules,
+                'address' => $addressRules,
             ],
             UserRole::PARENT->value => [
                 //
             ],
             UserRole::TEACHER->value => [
-                //
+                'employee_code' => [
+                    'required',
+                ],
+                'phone' => $phoneRules,
+                'address' => $addressRules,
+                'specialization' => [
+                    'required',
+                    Rule::in(Subjects::list()),
+                ],
+                'experience_years' => [
+                    'required',
+                    'integer'
+                ],
+                'classes' => [
+                    'nullable'
+                ],
             ],
             default => [],
         };

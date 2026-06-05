@@ -16,6 +16,20 @@ class TeacherClassAssignment extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'teacher_id',
+        'class_id',
+        'section_id',
+        'academic_year_id',
+        'status',
+    ];
+
+
+    /**
      * Get the teacher associated with this assignment.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

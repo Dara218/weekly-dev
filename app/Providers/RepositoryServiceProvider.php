@@ -55,5 +55,9 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Interfaces\SubjectInterface::class,
             \App\Repositories\SubjectRepository::class,
         );
+        $this->app->bind(
+            \App\Interfaces\SectionInterface::class,
+            \App\Repositories\SectionRepository::class,
+        );
     }
 }

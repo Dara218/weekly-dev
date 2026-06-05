@@ -25,6 +25,7 @@ class TeacherFactory extends Factory
             'user_id' => 3,
             'employee_code' => TeacherDataFormatHelper::employeeCodeFormatter((int) $sequenceNumber),
             'phone' => fake()->phoneNumber(),
+            'address' => fake()->address(),
             'specialization' => collect(Subjects::list())->random(),
             'experience_years' => rand(1, 10),
         ];

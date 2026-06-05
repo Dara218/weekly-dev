@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AcademicYear\GetAcademicYearController;
 use App\Http\Controllers\Authentication\ResetPasswordController;
+use App\Http\Controllers\Classes\GetClassesController;
 use App\Http\Controllers\Parents\GetParentsController;
+use App\Http\Controllers\Section\GetSectionController;
 use App\Http\Controllers\Student\{
     DeleteStudentFileController,
     GetStudentController,
@@ -69,5 +72,27 @@ Route::middleware('auth:sanctum')->group(function() {
         ->name('teachers.')
         ->group(function() {
             Route::get('/', [GetTeacherController::class, 'get'])->name('get');
+            Route::put('update/{userId}', [UpdateUserController::class, 'update'])->name('update');
+        });
+
+    // Classes route
+    Route::prefix('classes')
+        ->name('classes.')
+        ->group(function() {
+            Route::get('/', [GetClassesController::class, 'get'])->name('get');
+        });
+
+    // Section route
+    Route::prefix('sections')
+        ->name('sections.')
+        ->group(function() {
+            Route::get('/', [GetSectionController::class, 'get'])->name('get');
+        });
+
+    // Academic year route
+    Route::prefix('academic-years')
+        ->name('academic-years.')
+        ->group(function() {
+            Route::get('/', [GetAcademicYearController::class, 'get'])->name('get');
         });
 });
