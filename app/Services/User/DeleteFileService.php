@@ -49,8 +49,6 @@ class DeleteFileService
             $document = $this->userFileInterface->find($fileId);
             $filePath = $document->file_path;
 
-            Info($filePath);
-
             // Delete the file in the storage
             $this->storageService->delete($filePath);
 

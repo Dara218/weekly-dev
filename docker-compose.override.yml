@@ -3,15 +3,21 @@ services:
     build:
       args:
         PHP_MODE: development
+    ports:
+      - "8080:8080"
+
   httpd:
     ports:
-      - 8095:80 # Change if needed {8086:80 or so on if already in used}
+      - "8095:80" # Change if needed {8086:80 or so on if already in used}
+
   mysql:
     ports:
-      - 3306:3306
-  minio:
+      - "3306:3306"
+
+  floci:
     ports:
-      - 9000:9000
+      - "4566:4566"
+
   mailhog:
     ports:
-      - 8025:8025
+      - "8025:8025"

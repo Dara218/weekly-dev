@@ -57,6 +57,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the count of unread notifications for the user.
+     *
+     * @return int
+     */
+    public function getUnreadNotificationsCountAttribute(): int
+    {
+        return $this->unreadNotifications()->count();
+    }
+
+    /**
      * Get the student profile associated with the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne

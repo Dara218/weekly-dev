@@ -37,7 +37,6 @@ class GetTeacherController extends Controller
      */
     public function get(Request $request)
     {
-        Info($request->all());
         try {
             // Get all subjects
             $subjects = app(SubjectInterface::class)->all();

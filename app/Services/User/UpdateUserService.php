@@ -4,7 +4,9 @@ namespace App\Services\User;
 
 use App\Enum\UserRole;
 use App\Interfaces\UserInterface;
+use App\Models\Teacher;
 use App\Models\User;
+use App\Notifications\TeacherProfileUpdated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -140,6 +142,10 @@ class UpdateUserService
     {
         $teacher = $user->teacher;
 
+        if (!$teacher instanceof Teacher) {
+            throw new \Exception('Teacher profile not found for user.');
+        }
+
         $teacher->update([
             'user_id' => $user->id,
             'employee_code' => $teacher->employee_code,
@@ -149,10 +155,23 @@ class UpdateUserService
             'experience_years' => $data['experience_years'],
         ]);
 
+        $teacherChanges = collect($teacher->getChanges())
+            ->except('updated_at')
+            ->toArray();
+
+        $userChanges = collect($user->getChanges())
+            ->except(['updated_at', 'password'])
+            ->toArray();
+
+        $changes = array_merge($userChanges, $teacherChanges);
+
+        /** @var array<int, array<string, mixed>> $classes */
+        $classes = $data['classes'] ?? [];
+
         // Add/Update teacher class assignment
-        $ids = collect($data['classes'])
-            ->map(function ($class) use ($teacher) {
-                return $teacher->teacherClassAssignments()
+        $ids = collect($classes)
+            ->map(function (array $class) use ($teacher): int {
+                $assignment = $teacher->teacherClassAssignments()
                     ->updateOrCreate(
                         ['id' => $class['id'] ?? null],
                         [
@@ -160,14 +179,23 @@ class UpdateUserService
                             'section_id' => $class['section_id'],
                             'academic_year_id' => $class['academic_year_id'],
                         ],
-                    )
-                    ->id;
+                    );
+
+                return (int) $assignment->getKey();
             })
             ->all();
 
         $teacher->teacherClassAssignments()
             ->whereNotIn('id', $ids)
             ->delete();
+
+        // Send notification to the teacher only after the outer transaction
+        // successfully commits. This prevents the 'database' row and the
+        // real-time 'broadcast' event from firing if handleUpdateUser()
+        // later rolls back due to an error elsewhere in the transaction.
+        DB::afterCommit(function () use ($user, $changes) {
+            $user->notify(new TeacherProfileUpdated($changes));
+        });
     }
 
     /**
