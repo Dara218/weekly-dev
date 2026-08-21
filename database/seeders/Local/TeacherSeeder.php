@@ -36,6 +36,7 @@ class TeacherSeeder extends Seeder
                 'user_id' => $user->id,
                 'employee_code' => TeacherDataFormatHelper::employeeCodeFormatter($index),
                 'phone' => '0912345678' . $index,
+                'address' => fake()->address(),
                 'specialization' => Subjects::cases()[array_rand(Subjects::cases())]->value,
                 'experience_years' => rand(1, 10),
             ]);

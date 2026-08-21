@@ -154,7 +154,7 @@ class Student extends Model
     {
         // Get students connected with current logged in teacher
         $query->whereHas('section', function ($query) {
-            $query->where('teacher_id', auth()->user()->teacher->id);
+            $query->where('teacher_id', auth()->user()?->teacher?->getKey());
         });
 
         return $query

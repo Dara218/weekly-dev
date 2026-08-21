@@ -51,6 +51,11 @@ class UploadFileService
 
         try {
             $file = file_get_contents($uploadedFile->getRealPath());
+
+            if ($file === false) {
+                throw new \RuntimeException('Unable to read uploaded file contents.');
+            }
+
             $fileName = $uploadedFile->getClientOriginalName();
             $fileType = $uploadedFile->getMimeType();
             $filePath = FormatFilePathHelper::formatStudentFilePath($userId, $fileName);

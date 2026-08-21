@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcademicYear\GetAcademicYearController;
 use App\Http\Controllers\Authentication\ResetPasswordController;
 use App\Http\Controllers\Classes\GetClassesController;
+use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Parents\GetParentsController;
 use App\Http\Controllers\Section\GetSectionController;
 use App\Http\Controllers\Student\{
@@ -25,6 +26,16 @@ Route::get('reset-password', [ResetPasswordController::class, 'index'])->name('i
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function() {
+    // Notification route
+    Route::prefix('notification')
+        ->name('notification')
+        ->controller(NotificationController::class)
+        ->group(function() {
+            Route::get('unread-count', 'unreadCount')->name('unread-count');
+            Route::put('read-all-notification', 'readAllNotification')->name('read-all-notification');
+            Route::get('get-unread-notification', 'getUnreadNotification')->name('get-unread-notification');
+        });
+
     // User route
     Route::prefix('user')->name('user.')->group(function() {
         // Get the auth user
