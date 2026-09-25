@@ -1,8 +1,18 @@
 <?php
 
 use App\Http\Controllers\AcademicYear\GetAcademicYearController;
+use App\Http\Controllers\Ai\{
+    GetConversationsController,
+    SendChatMessageController,
+    StreamChatMessageController,
+};
 use App\Http\Controllers\Authentication\ResetPasswordController;
 use App\Http\Controllers\Classes\GetClassesController;
+use App\Http\Controllers\Message\{
+    GetConversationController,
+    GetInboxController,
+    SendMessageController,
+};
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Parents\GetParentsController;
 use App\Http\Controllers\Section\GetSectionController;
@@ -105,5 +115,25 @@ Route::middleware('auth:sanctum')->group(function() {
         ->name('academic-years.')
         ->group(function() {
             Route::get('/', [GetAcademicYearController::class, 'get'])->name('get');
+        });
+
+    // AI Chat routes (rate-limited)
+    Route::prefix('ai/chat')
+        ->name('ai.chat.')
+        ->middleware('throttle:ai-chat')
+        ->group(function () {
+            Route::post('/', SendChatMessageController::class)->name('send');
+            Route::post('/stream', StreamChatMessageController::class)->name('stream');
+            Route::get('/conversations', [GetConversationsController::class, 'index'])->name('conversations.index');
+            Route::get('/conversations/{conversationId}', [GetConversationsController::class, 'show'])->name('conversations.show');
+        });
+
+    // Message routes
+    Route::prefix('messages')
+        ->name('messages.')
+        ->group(function () {
+            Route::get('/inbox', GetInboxController::class)->name('inbox');
+            Route::get('/conversation/{userId}', GetConversationController::class)->name('conversation');
+            Route::post('/', SendMessageController::class)->name('send');
         });
 });
