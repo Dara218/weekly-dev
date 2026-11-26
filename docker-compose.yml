@@ -18,6 +18,22 @@ services:
     networks:
       - weekly_dev_network
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: weekly_dev_scheduler
+    restart: unless-stopped
+    user: www-data
+    working_dir: /var/www/weekly-dev
+    command: php artisan schedule:work
+    volumes:
+      - ./:/var/www/weekly-dev
+    depends_on:
+      - mysql
+    networks:
+      - weekly_dev_network
+
   httpd:
     build:
       context: .

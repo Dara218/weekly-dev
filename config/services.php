@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'frontend' => [
+        'url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
+
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'currency' => env('STRIPE_CURRENCY', 'php'),
+        'product_id' => env('STRIPE_PRODUCT_ID'),
+        'price_id' => env('STRIPE_PRICE_ID'),
+    ],
+
 ];

@@ -33,6 +33,7 @@ class User extends Authenticatable
         'role',
         'profile_image',
         'is_active',
+        'stripe_customer_id',
     ];
 
     /**
