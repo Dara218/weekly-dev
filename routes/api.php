@@ -14,7 +14,16 @@ use App\Http\Controllers\Message\{
     SendMessageController,
 };
 use App\Http\Controllers\Notification\NotificationController;
-use App\Http\Controllers\Parents\GetParentsController;
+use App\Http\Controllers\Parents\{
+    GetMyChildrenController,
+    GetParentsController,
+};
+use App\Http\Controllers\Payment\{
+    GetInvoicesController,
+    HandleStripeWebhookController,
+    PayOverdueInvoicesController,
+    PayStripeInvoiceController,
+};
 use App\Http\Controllers\Section\GetSectionController;
 use App\Http\Controllers\Student\{
     DeleteStudentFileController,
@@ -33,6 +42,9 @@ use Illuminate\Support\Facades\Route;
 
 // Guest routes
 Route::get('reset-password', [ResetPasswordController::class, 'index'])->name('index');
+
+Route::post('stripe/webhook', HandleStripeWebhookController::class)
+    ->name('stripe.webhook');
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function() {
@@ -136,4 +148,14 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('/conversation/{userId}', GetConversationController::class)->name('conversation');
             Route::post('/', SendMessageController::class)->name('send');
         });
+
+    // Stripe monthly invoice routes
+    Route::get('parent/children', GetMyChildrenController::class)
+        ->name('parent.children');
+    Route::get('invoices', GetInvoicesController::class)
+        ->name('invoices.index');
+    Route::post('invoices/pay-overdue', PayOverdueInvoicesController::class)
+        ->name('invoices.pay-overdue');
+    Route::post('invoices/{invoice}/pay', PayStripeInvoiceController::class)
+        ->name('invoices.pay');
 });

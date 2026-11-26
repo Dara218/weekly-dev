@@ -10,6 +10,8 @@ enum InvoiceStatus: string
     case UNPAID = 'UNPAID';
     case PAID = 'PAID';
     case PARTIAL = 'PARTIAL';
+    case VOID = 'VOID';
+    case UNCOLLECTIBLE = 'UNCOLLECTIBLE';
 
     /**
      * Get the list of all enum values.

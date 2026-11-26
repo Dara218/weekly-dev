@@ -12,7 +12,6 @@ use Illuminate\Http\{
     Response,
 };
 
-
 class GetInboxController extends Controller
 {
     /**

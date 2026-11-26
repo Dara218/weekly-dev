@@ -36,6 +36,9 @@ class Student extends Model
         'address',
         'student_status',
         'phone',
+        'stripe_subscription_id',
+        'stripe_subscription_status',
+        'stripe_customer_id',
     ];
 
     /**
